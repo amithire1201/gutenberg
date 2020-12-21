@@ -135,8 +135,8 @@ class WP_Theme_JSON {
 				'dropCap'               => null,
 				'fontFamilies'          => null,
 				'fontSizes'             => null,
-				'customFontStyle'      => null,
-				'customFontWeight'     => null,
+				'customFontStyle'       => null,
+				'customFontWeight'      => null,
 				'customTextDecorations' => null,
 				'customTextTransforms'  => null,
 			),
@@ -301,7 +301,7 @@ class WP_Theme_JSON {
 	/**
 	 * Constructor.
 	 *
-	 * @param array $contexts A structure that follows the theme.json schema.
+	 * @param array   $contexts A structure that follows the theme.json schema.
 	 * @param boolean $should_escape Whether the incoming styles should be escaped.
 	 */
 	public function __construct( $contexts = array(), $should_escape = false ) {
@@ -471,9 +471,9 @@ class WP_Theme_JSON {
 	 * This function modifies the given input by removing
 	 * the nodes that aren't valid per the schema.
 	 *
-	 * @param string $key Key of the subtree to normalize.
-	 * @param array  $input Whole tree to normalize.
-	 * @param array  $schema Schema to use for normalization.
+	 * @param string  $key Key of the subtree to normalize.
+	 * @param array   $input Whole tree to normalize.
+	 * @param array   $schema Schema to use for normalization.
 	 * @param boolean $should_escape Whether the subproperties should be escaped.
 	 */
 	private static function process_key( $key, &$input, $schema, $should_escape = false ) {
@@ -498,7 +498,7 @@ class WP_Theme_JSON {
 
 		if ( $should_escape ) {
 			$subtree = $input[ $key ];
-			foreach( $subtree as $property => $value ) {
+			foreach ( $subtree as $property => $value ) {
 				$name = 'background-color';
 				if ( 'gradient' === $property ) {
 					$name = 'background';
