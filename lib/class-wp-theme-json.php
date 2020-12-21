@@ -302,8 +302,9 @@ class WP_Theme_JSON {
 	 * Constructor.
 	 *
 	 * @param array $contexts A structure that follows the theme.json schema.
+	 * @param boolean $should_escape Whether the incoming styles should be escaped.
 	 */
-	public function __construct( $contexts = array() ) {
+	public function __construct( $contexts = array(), $should_escape = false ) {
 		$this->contexts = array();
 
 		if ( ! is_array( $contexts ) ) {
@@ -324,8 +325,9 @@ class WP_Theme_JSON {
 			// Process styles subtree.
 			$this->process_key( 'styles', $context, self::SCHEMA );
 			if ( isset( $context['styles'] ) ) {
-				$this->process_key( 'color', $context['styles'], self::SCHEMA['styles'] );
-				$this->process_key( 'typography', $context['styles'], self::SCHEMA['styles'] );
+				$this->process_key( 'color', $context['styles'], self::SCHEMA['styles'], $should_escape );
+				$this->process_key( 'spacing', $context['styles'], self::SCHEMA['styles'], $should_escape );
+				$this->process_key( 'typography', $context['styles'], self::SCHEMA['styles'], $should_escape );
 
 				if ( empty( $context['styles'] ) ) {
 					unset( $context['styles'] );
@@ -472,8 +474,9 @@ class WP_Theme_JSON {
 	 * @param string $key Key of the subtree to normalize.
 	 * @param array  $input Whole tree to normalize.
 	 * @param array  $schema Schema to use for normalization.
+	 * @param boolean $should_escape Whether the subproperties should be escaped.
 	 */
-	private static function process_key( $key, &$input, $schema ) {
+	private static function process_key( $key, &$input, $schema, $should_escape = false ) {
 		if ( ! isset( $input[ $key ] ) ) {
 			return;
 		}
@@ -492,6 +495,21 @@ class WP_Theme_JSON {
 			$input[ $key ],
 			$schema[ $key ]
 		);
+
+		if ( $should_escape ) {
+			$subtree = $input[ $key ];
+			foreach( $subtree as $property => $value ) {
+				$name = 'background-color';
+				if ( 'gradient' === $property ) {
+					$name = 'background';
+				}
+				$result = safecss_filter_attr( "$name: $value" );
+
+				if ( '' === $result ) {
+					unset( $input[ $key ][ $property ] );
+				}
+			}
+		}
 
 		if ( 0 === count( $input[ $key ] ) ) {
 			unset( $input[ $key ] );
